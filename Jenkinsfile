@@ -37,6 +37,21 @@ pipeline {
       }
     }
 
+    stage('Check Scanner Contents') {
+  steps {
+    bat '''
+      dir
+      if exist sonar-scanner-5.0.1.3006-windows\\bin (
+        echo "Scanner folder found"
+        dir sonar-scanner-5.0.1.3006-windows\\bin
+      ) else (
+        echo "Scanner folder NOT found"
+      )
+    '''
+  }
+}
+
+
     stage('SonarCloud Analysis') {
       steps {
         echo "Downloading and running SonarCloud Scanner..."
