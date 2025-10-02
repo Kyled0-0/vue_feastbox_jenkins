@@ -1,6 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { describe, it, expect, beforeEach } from 'vitest'
-import { createPinia, setActivePinia } from 'pinia'     // ⬅️ add this
+import { createPinia, setActivePinia } from 'pinia' 
 import PaymentForm from '../PaymentForm.vue'
 
 
