@@ -38,16 +38,22 @@ pipeline {
       }
     }
 
-    stage('Build') {
+    stage('SonarCloud Analysis') {
       steps {
-        echo "Building Vue app..."
-        bat 'npm run build'
+        echo "Downloading and running SonarCloud Scanner..."
+        withCredentials([string(credentialsId: 'HDSIT223', variable: 'SONAR_TOKEN')]) {
+          bat """
+            curl -sSLo sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-windows.zip
+            powershell -Command "Expand-Archive -Force sonar-scanner.zip -DestinationPath ."
+            set PATH=%CD%\\sonar-scanner-5.0.1.3006-windows\\bin;%PATH%
 
-        echo "Archiving dist folder as build artefact..."
-        archiveArtifacts artifacts: 'dist/**', fingerprint: true
-
-        echo "Building Docker image for deployment..."
-        bat 'docker build -t vue-feastbox:latest .'
+            sonar-scanner ^
+              -Dsonar.projectKey=Kyled0-0_vue_feastbox_jenkins ^
+              -Dsonar.organization=8-2c ^
+              -Dsonar.host.url=https://sonarcloud.io ^
+              -Dsonar.login=%SONAR_TOKEN%
+          """
+        }
       }
     }
   }
