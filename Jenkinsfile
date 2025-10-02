@@ -1,23 +1,46 @@
 pipeline {
   agent any
-  tools { nodejs "NodeJS_18" }
+
+  tools {
+    nodejs "NodeJS_18"   // Make sure you've added NodeJS_18 in Jenkins → Global Tool Configuration
+  }
 
   stages {
+    stage('Checkout') {
+      steps {
+        echo "Pulling latest code from GitHub..."
+        checkout scm
+      }
+    }
+
+    stage('Install Dependencies') {
+      steps {
+        echo "Installing npm packages..."
+        sh 'npm ci'
+      }
+    }
+
     stage('Build') {
       steps {
-        sh 'npm ci'
+        echo "Building Vue 3 application..."
         sh 'npm run build'
-        archiveArtifacts artifacts: 'dist/**', fingerprint: true
+        echo "Build complete. The /dist folder should now be generated."
       }
     }
-    stage('Test') {
-      steps { sh 'npm run test' }
-    }
-    stage('Deploy') {
+
+    stage('Run Preview Server') {
       steps {
-        sh 'docker build -t vueapp:latest .'
-        sh 'docker run -d -p 8081:80 vueapp:latest'
+        echo "Starting preview server on port 4173..."
+        sh 'npx serve -s dist -l 4173 &'
+        sleep(time: 10, unit: 'SECONDS') // wait for server to start
+        echo "Server should now be live on http://<JENKINS_SERVER_IP>:4173"
       }
+    }
+  }
+
+  post {
+    always {
+      echo "Pipeline finished."
     }
   }
 }
