@@ -16,14 +16,14 @@ pipeline {
     stage('Install Dependencies') {
       steps {
         echo "Installing npm packages..."
-        sh 'npm ci'
+        bat 'npm ci'
       }
     }
 
     stage('Build') {
       steps {
         echo "Building Vue 3 application..."
-        sh 'npm run build'
+        bat 'npm run build'
         echo "Build complete. The /dist folder should now be generated."
       }
     }
@@ -31,7 +31,7 @@ pipeline {
     stage('Run Preview Server') {
       steps {
         echo "Starting preview server on port 4173..."
-        sh 'npx serve -s dist -l 4173 &'
+        bat 'npx serve -s dist -l 4173 &'
         sleep(time: 10, unit: 'SECONDS') // wait for server to start
         echo "Server should now be live on http://<JENKINS_SERVER_IP>:4173"
       }
