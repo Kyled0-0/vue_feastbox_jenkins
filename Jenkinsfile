@@ -27,15 +27,6 @@ pipeline {
         echo "Build complete. The /dist folder should now be generated."
       }
     }
-
-    stage('Run Preview Server') {
-      steps {
-        echo "Starting preview server on port 4173..."
-        bat 'npx serve -s dist -l 4173 &'
-        sleep(time: 10, unit: 'SECONDS') // wait for server to start
-        echo "Server should now be live on http://<JENKINS_SERVER_IP>:4173"
-      }
-    }
   }
 
   post {
