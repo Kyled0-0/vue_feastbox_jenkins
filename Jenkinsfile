@@ -5,6 +5,10 @@ pipeline {
     nodejs "NodeJs"
   }
 
+   environment {
+    SONAR_TOKEN = credentials('HDSIT223')  
+  }
+
   stages {
     stage('Checkout') {
       steps {
@@ -22,6 +26,14 @@ pipeline {
       steps {
         echo 'Running unit tests with Vitest...'  
         bat 'npm run test:unit'
+      }
+    }
+
+    stage('Code Quality Analysis') {
+      steps {
+        withSonarQubeEnv('SonarCloud') {            /
+        bat 'sonar-scanner'                      
+        }
       }
     }
 
