@@ -63,6 +63,13 @@ pipeline {
       }
     }
 
+    stage('Build') {
+      steps {
+        bat 'npm run build'
+        archiveArtifacts artifacts: 'dist/**', fingerprint: true
+        bat 'docker build -t vue-feastbox:latest .'
+    }
+
     stage('Deploy') {
       steps {
         echo "Deploying Docker container to test environment..."
