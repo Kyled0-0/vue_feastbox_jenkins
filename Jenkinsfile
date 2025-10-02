@@ -13,6 +13,13 @@ pipeline {
       }
     }
 
+    stage('Test') {
+      steps {
+        echo 'Running unit tests with Vitest...'  
+        bat 'npm run test:unit'
+      }
+    }
+
     stage('Build') {
       steps {
         echo "Installing dependencies & building Vue app..."
