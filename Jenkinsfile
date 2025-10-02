@@ -2,7 +2,8 @@ pipeline {
   agent any
 
   tools {
-    nodejs "NodeJs"
+    nodejs 'NodeJs'
+    sonarQube 'SonarScanner'
   }
 
    environment {
