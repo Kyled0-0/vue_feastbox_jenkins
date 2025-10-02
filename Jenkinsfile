@@ -82,6 +82,24 @@ pipeline {
       }
     }
 
+    stage('Release') {
+    steps {
+      echo "Releasing Docker image to Docker Hub..."
+
+      withCredentials([usernamePassword(credentialsId: 'docker-hub-creds',
+                                        usernameVariable: 'DOCKER_USER',
+                                        passwordVariable: 'DOCKER_PASS')]) {
+
+
+        bat 'echo %DOCKER_PASS% | docker login -u %DOCKER_USER% --password-stdin'
+        bat 'docker tag vue-feastbox:latest %DOCKER_USER%/vue-feastbox:prod'
+        bat 'docker push %DOCKER_USER%/vue-feastbox:prod'
+      }
+
+      echo "Release complete — image pushed to Docker Hub as vue-feastbox:prod"
+    }
+  }
+
 
 
 
