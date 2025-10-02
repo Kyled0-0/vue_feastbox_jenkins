@@ -22,9 +22,15 @@ pipeline {
 
     stage('Build') {
       steps {
-        echo "Building Vue 3 application..."
+        echo "Installing dependencies & building Vue app..."
+        bat 'npm ci'
         bat 'npm run build'
-        echo "Build complete. The /dist folder should now be generated."
+
+        echo "Archiving dist folder as build artefact..."
+        archiveArtifacts artifacts: 'dist/**', fingerprint: true
+
+        echo "Building Docker image for deployment..."
+        bat 'docker build -t vue-feastbox:latest .'
       }
     }
   }
