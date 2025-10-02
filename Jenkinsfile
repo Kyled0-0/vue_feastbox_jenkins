@@ -39,6 +39,7 @@ pipeline {
 
     stage('Check Scanner Contents') {
   steps {
+    echo"start check scanner contents"
     bat '''
       dir
       if exist sonar-scanner-5.0.1.3006-windows\\bin (
