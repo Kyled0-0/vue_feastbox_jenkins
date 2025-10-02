@@ -6,7 +6,7 @@ pipeline {
   }
 
    environment {
-    SONAR_TOKEN = credentials('HDSIT223')  
+    SONAR_HOST_URL = "https://sonarcloud.io"
   }
 
   stages {
@@ -49,7 +49,7 @@ pipeline {
             sonar-scanner ^
               -Dsonar.projectKey=Kyled0-0_vue_feastbox_jenkins ^
               -Dsonar.organization=8-2c ^
-              -Dsonar.host.url=https://sonarcloud.io ^
+              -Dsonar.host.url=%SONAR_HOST_URL% ^
               -Dsonar.login=%SONAR_TOKEN%
           """
         }
