@@ -10,9 +10,9 @@ pipeline {
   }
 
   stages {
-    stage('Checkout') {
+    stage('Github') {
       steps {
-        echo "Pulling latest code from GitHub..."
+        echo "Fetching the code from Github"
         checkout scm
       }
     }
@@ -24,7 +24,7 @@ pipeline {
 
     stage('Test') {
       steps {
-        echo 'Running unit tests with Vitest...'  
+        echo 'Running unit tests with Vitest'  
         bat 'npm run test:unit'
       }
     }
@@ -32,7 +32,7 @@ pipeline {
 
     stage('SonarCloud Analysis') {
       steps {
-        echo "Downloading and running SonarCloud Scanner..."
+        echo "Download and run SonarCloud scanner"
         withCredentials([string(credentialsId: 'HDSIT223', variable: 'SONAR_TOKEN')]) {
           bat '''
             curl -sSLo sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-windows.zip
@@ -49,9 +49,9 @@ pipeline {
       }
     }
 
-    stage('Security Scan - Snyk') {
+    stage('Snyk Security Scan') {
       steps {
-        echo "Running Snyk security scan..."
+        echo "Running Snyk security scan"
         withCredentials([string(credentialsId: 'snyk-token', variable: 'SNYK_TOKEN')]) {
           bat 'npm install -g snyk'
           bat 'snyk auth %SNYK_TOKEN%'
@@ -78,31 +78,9 @@ pipeline {
         bat 'docker rm vue-feastbox-container || exit 0'
         echo "About to run docker run..."
         bat 'docker run -d -p 8081:80 --name vue-feastbox-container vue-feastbox:latest'
-        echo "Application deployed to http://localhost:8081"
+        echo "Deployed to http://localhost:8081"
       }
     }
-
-    stage('Release') {
-    steps {
-      echo "Releasing Docker image to Docker Hub..."
-
-      withCredentials([usernamePassword(credentialsId: 'docker-hub-creds',
-                                        usernameVariable: 'DOCKER_USER',
-                                        passwordVariable: 'DOCKER_PASS')]) {
-
-
-        bat 'echo %DOCKER_PASS% | docker login -u %DOCKER_USER% --password-stdin'
-        bat 'docker tag vue-feastbox:latest %DOCKER_USER%/vue-feastbox:prod'
-        bat 'docker push %DOCKER_USER%/vue-feastbox:prod'
-      }
-
-      echo "Release complete — image pushed to Docker Hub as vue-feastbox:prod"
-    }
-  }
-
-
-
-
   }
 
   post {
