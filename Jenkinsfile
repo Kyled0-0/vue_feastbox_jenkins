@@ -63,6 +63,20 @@ pipeline {
       }
     }
 
+    stage('Deploy') {
+      steps {
+        echo "Deploying Docker container to test environment..."
+    
+        bat 'docker stop vue-feastbox-container || echo "No previous container to stop"'
+        bat 'docker rm vue-feastbox-container || echo "No previous container to remove"'
+
+        bat 'docker run -d -p 8081:80 --name vue-feastbox-container vue-feastbox:latest'
+
+        echo "Application deployed to http://localhost:8081"
+      }
+  }
+
+
   }
 
   post {
