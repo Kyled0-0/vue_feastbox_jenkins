@@ -39,8 +39,7 @@ pipeline {
 
     stage('Build') {
       steps {
-        echo "Installing dependencies & building Vue app..."
-        bat 'npm ci'
+        echo "Building Vue app..."
         bat 'npm run build'
 
         echo "Archiving dist folder as build artefact..."
