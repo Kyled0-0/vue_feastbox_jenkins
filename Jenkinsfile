@@ -2,7 +2,7 @@ pipeline {
   agent any
 
   tools {
-    nodejs "NodeJs"   // Make sure you've added NodeJS_18 in Jenkins → Global Tool Configuration
+    nodejs "NodeJs"
   }
 
   stages {
@@ -10,13 +10,6 @@ pipeline {
       steps {
         echo "Pulling latest code from GitHub..."
         checkout scm
-      }
-    }
-
-    stage('Install Dependencies') {
-      steps {
-        echo "Installing npm packages..."
-        bat 'npm ci'
       }
     }
 
