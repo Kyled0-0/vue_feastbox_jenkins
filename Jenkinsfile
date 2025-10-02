@@ -49,6 +49,20 @@ pipeline {
       }
     }
 
+    stage('Security Scan - Snyk') {
+      steps {
+        echo "Running Snyk security scan..."
+        withCredentials([string(credentialsId: 'snyk-token', variable: 'SNYK_TOKEN')]) {
+          bat 'npm install -g snyk'
+          bat 'snyk auth %SNYK_TOKEN%'
+          bat 'snyk test --json > snyk-report.json || exit 0'
+        }
+
+        echo "Security scan complete. Report saved."
+        archiveArtifacts artifacts: 'snyk-report.json', fingerprint: true
+      }
+    }
+
   }
 
   post {
