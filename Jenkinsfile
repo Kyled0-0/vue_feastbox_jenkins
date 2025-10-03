@@ -73,7 +73,7 @@ pipeline {
 
     stage('Deploy') {
       steps {
-        echo "Deploying Docker container to test environment..."
+        echo "Deploying Docker container to local host environment"
         bat 'docker stop vue-feastbox-container || exit 0'
         bat 'docker rm vue-feastbox-container || exit 0'
         echo "About to run docker run..."
@@ -81,6 +81,21 @@ pipeline {
         echo "Deployed to http://localhost:8081"
       }
     }
+
+    stage('Release') {
+    steps {
+      echo "Releasing Docker image to Docker Hub"
+      withCredentials([usernamePassword(credentialsId: 'dockerhub-creds',usernameVariable: 'DOCKER_USER',passwordVariable: 'DOCKER_PASS')]) {
+        bat """
+          docker login -u %DOCKER_USER% -p %DOCKER_PASS%
+          docker tag vue-feastbox:latest %DOCKER_USER%/vue-feastbox:prod
+          docker push %DOCKER_USER%/vue-feastbox:prod
+        """
+      }
+      echo "Docker image successfully pushed to Docker Hub."
+    }
+  }
+
   }
 
   post {
